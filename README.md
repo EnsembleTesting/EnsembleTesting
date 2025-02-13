@@ -18,17 +18,17 @@ Start by cloning the repository on your local folder and then, to install, just 
 
 # Dataset:
 ## Driving data (Dave, Udacity):
-For Dave, please follow the link to download:
+For Dave, please follow the link to download:<br />
 https://github.com/SullyChen/Autopilot-TensorFlow
 
-For Udacity, please follow the official procedure to download (Ch2_002): 
+For Udacity, please follow the official procedure to download (Ch2_002): <br />
 https://github.com/udacity/self-driving-car/tree/master/datasets
 
 ## Android Packages (AndroZoo, Drebin):
-For AndroZoo, please follow the procedure from the official website to download:
+For AndroZoo, please follow the procedure from the official website to download:<br />
 https://androzoo.uni.lu/
 
-For Drebin, we directly use the extracted feature, provided by the authors of the paper: 
+For Drebin, we directly use the extracted feature, provided by the authors of the paper: <br />
 Adversarial Deep Ensemble: Evasion Attacks and Defenses for Malware Detection (TRANSACTIONS ON INFORMATION FORENSICS AND SECURITY), by Deqiang Li and Qianmu Li.
 
 # Run:
@@ -58,4 +58,4 @@ For driving data, <br />
 `cd adv-self-driving`<br />
 `python3 root_cause_detect_gpu.py`<br />
 
-
+Please specify the interested parameters (metric, budget, id_ratio, OOD method, dataset, model) in the script.
