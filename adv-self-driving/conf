@@ -1,0 +1,12 @@
+[DEFAULT]
+project_root = /adv-self-driving/
+test_suite = /adv-self-driving/test_suite/
+database_dir = /drebin/
+dataset_name = drebin
+surrogate_dataset = drebin
+mode = retrain
+
+[experiments]
+epoch = /adv-self-driving/saved_parameters/Epoch
+dave2v1 =  /adv-self-driving/saved_parameters/Dave2V1
+dave2v2 =  /driving/saved_parameters/Dave2V2
