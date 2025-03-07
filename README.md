@@ -1,16 +1,16 @@
-# Ensemble-based Testing for Deep Neural Networks through Scale Unification
-This repository contains experiments conducted in the paper 'Ensemble-based Testing for Deep Neural Networks through Scale Unification', submitted to the IEEE Transactions on Software Engineering journal.
+# Unified Ensemble-Based Testing for Fault Detection and Retraining in Deep Neural Networks
+This repository contains experiments conducted in the paper 'Unified Ensemble-Based Testing for Fault Detection and Retraining in Deep Neural Networks', submitted to the IEEE Transactions on Software Engineering journal.
 
 ## Abstract:  
-Testing Deep learning (DL)-based systems is a critical step in identifying internal defects and performing repairs. Comprehensive testing usually requires a plethora of crafted and representative test cases, in which they can evaluate whether the trained DL-based systems can generalize to the unseen data. Many different test input generators (TIGs) have been proposed, creating a massive amount of inputs. Hence, test selection metrics are proposed for selecting and prioritizing potentially mispredicted inputs, thereby saving manual labelling costs and accelerating Deep Neural Networks (DNNs) repairing process. Although existing metrics have shown promising results, we have observed three limitations when applying them in practice: 1. Lack the consideration of consensus decision from different metrics; 2. The evaluation criteria are insufficient; 3. They mainly focus on simple image classification tasks (e.g., MNIST, SVHN).
+Testing deep learning (DL)-based systems is critical for identifying internal defects and improving their robustness. Existing test selection metrics have shown promising results and focus on individual aspects like uncertainty or neuron coverage but fail to consider consensus decisions across metrics, limiting fault detection and retraining effectiveness. Specifically, we observed three key limitations: 1. Lack of consideration for the consensus of results from multiple independent metrics (i.e., selecting inputs based on a fused score from multiple metrics); 2. Insufficient effectiveness evaluation; 3. Limited scope of tasks and datasets. 
 
-In this paper, we address these three limitations correspondingly by performing ensemble-based testing through granularity and scale unification, examining the effectiveness of test selection metrics on both the capability of root cause detection and the capability of retraining guidance, and assessing the performance on two different domains, autonomous driving and malware detection. Validated on two Android malware datasets and two real-world driving datasets, our method outperforms five baselines across two criteria. Compared with the best baseline, for retraining guidance, our method reaches an extra accuracy improvement by up to 9.13\% for driving datasets and 2.81\% for malware datasets. For root cause detection, our method is estimated to identify more root causes in 23 out of 44 cases across all datasets. Additionally, our ablation study validates the effectiveness of each component of our method, including scale unification and ensemble-based selection. We also open-source our code to assist further research for the Software Engineering community.
-
+In this paper, we propose an ensemble-based testing framework that integrates scale and granularity unification to systematically combine multiple test selection metrics, by examining the effectiveness of test selection metrics on both the capability of fault detection and the capability of retraining guidance, and assessing the performance on two different domains.
+Experimented and validated on two Android malware and two real-world driving datasets, our method achieves statistically significant improvements in fault detection (e.g., detecting 23 faults on average) and retraining guidance (e.g., achieving an average of 34.04% accuracy improvement for malware datasets and 13.22% for driving datasets). Compared to state-of-the-art baselines, our framework offers superior testing reliability and robustness across diverse out-of-distribution (OOD) scenarios. Additionally, our ablation study statistically validates the effectiveness of each component of our method, including scale unification and ensemble-based selection. All code and data are open-source to support further research.
 
 # Environment:
 To successfully run the code, we provide two conda environment files. <br />
--environmentdnn.yml is the file for the main experiments except for computing the root causes.<br />
--environmentdetect.yml is the file for conducting clustering and computing the number of root causes with the given test suite.
+-environmentdnn.yml is the file for the main experiments except for computing the clusters.<br />
+-environmentdetect.yml is the file for conducting clustering and computing the number of clusters with the given test suite.
 
 Start by cloning the repository on your local folder and then, to install, just run:<br />
 `conda env create -f environmentdnn.yml` <br />
@@ -47,7 +47,7 @@ For driving data, <br />
 
 Please specify the interested parameters (metric, budget, id_ratio, OOD method, epochs) in the script.
 
-## Test selection metrics to detect root causes:
+## Test selection metrics to detect faults:
 `conda activate faultdetect`
 
 For malware data, <br />
