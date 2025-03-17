@@ -1,6 +1,5 @@
 '''
-env malwaregpu for GPU UMAP; usage python3 root_cause_detect_gpu.py
-export LD_LIBRARY_PATH=/home/jzhang2297/cuda/cuda/cuda-11.2/lib64:$LD_LIBRARY_PATH
+usage python3 root_cause_detect_gpu.py
 we use combined selected test suite from all operators to examine the fault detection
 '''
 
