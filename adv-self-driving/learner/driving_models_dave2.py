@@ -364,6 +364,9 @@ class Dave2v1(Classifier):
             elif metric == 'gd':
                 selection_size = int(budget * candidateX.shape[0])
                 selected_candidateX, selected_candidatey = GD(sess, candidateX, candidatey, self, selection_size, 60)
+            elif metric == 'dsa':
+                selected_candidateX, selected_candidatey = dsa_select(sess, trainX, trainy, candidateX, candidatey,
+                                                                      self, budget, dataset, self.model_name)
             elif metric == 'deepgd':
                 selected_candidateX, selected_candidatey = deepGD(sess, candidateX, candidatey, self, budget)
             elif metric == 'ensemble_simple':
@@ -417,4 +420,5 @@ def test_dave():
 if __name__ == '__main__':
 
     test_dave()
+
 
