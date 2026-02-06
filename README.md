@@ -1,5 +1,5 @@
 # Ensemble-Based Test Selection for Fault Detection and Retraining in Deep Neural Networks
-This repository contains experiments conducted in the paper 'Ensemble-Based Test Selection for Fault Detection and Retraining in Deep Neural Networks'.
+This repository provides implementation of the paper 'Ensemble-Based Test Selection for Fault Detection and Retraining in Deep Neural Networks'.
 
 ## Abstract:  
 Testing deep learning (DL)–based systems is essential for identifying internal defects and improving model robustness. Existing test selection metrics have demonstrated effectiveness by focusing on specific characteristics, such as model uncertainty or input diversity. However, these metrics are typically applied in isolation, limiting their ability to capture complementary testing signals. More importantly, existing ensemble-based approaches generally rely on a conditional selection strategy (e.g., apply different individual metrics based on conditions) or search-based trade-offs (e.g., use NSGA-II). We identify two key challenges in prior research: (1) the absence of a statistically principled methodology for unifying and combining heterogeneous test selection metrics, and (2) insufficient effectiveness analysis of selection metrics under diverse distribution shifts and data types.
