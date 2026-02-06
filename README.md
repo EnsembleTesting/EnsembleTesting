@@ -90,4 +90,5 @@ Please specify the interested parameters (metric, budget, id_ratio, OOD method, 
 
 ## References.
 [1] Z. Aghababaeyan, M. Abdellatif, L. Briand, S. Ramesh, and M. Bagherzadeh, “Black-box testing of deep neural networks through test case diversity,” IEEE Transactions on Software Engineering, vol. 49, no. 5, pp. 3182–3204, 2023.
+
 [2] M. O. Attaoui, H. Fahmy, F. Pastore, and L. Briand, “Supporting safety analysis of image-processing dnns through clustering-based approaches,” ACM Transactions on Software Engineering and Methodology, vol. 33, no. 5, pp. 1–48, 2024.
