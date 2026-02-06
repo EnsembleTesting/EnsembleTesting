@@ -13,7 +13,7 @@ our_method_params['gd_num'], our_method_params['w_gini'], our_method_params['w_e
 tests = [
 
 {
-        'selection_metric': ['ensemble_p_values'],#['entropy', 'random', 'gd', 'deepgini'],
+        'selection_metric': ['ensemble_p_values_fisher'],#['entropy', 'random', 'gd', 'deepgini'],
         'budget':  [0.1, 0.05, 0.03, 0.01],
         'id_ratio': [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
         'method': ['FGSM', 'BIM', 'Mementum', 'PGD'], # 'FGSM', 'BIM', 'Mementum', 'PGD'
