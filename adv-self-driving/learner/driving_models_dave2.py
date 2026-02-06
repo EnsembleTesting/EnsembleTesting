@@ -368,8 +368,8 @@ class Dave2v1(Classifier):
                 selected_candidateX, selected_candidatey = ensemble_simple(sess, candidateX, candidatey, self, budget, our_method_params)
             elif metric == 'ensemble_simple_add':
                 selected_candidateX, selected_candidatey = ensemble_simple_add(sess, candidateX, candidatey, self, budget, our_method_params)
-            elif metric == 'ensemble_p_values':
-                selected_candidateX, selected_candidatey = ensemble_p_values(sess, trainX, trainy, candidateX, candidatey, self, budget, our_method_params)
+            elif metric == 'ensemble_p_values_fisher':
+                selected_candidateX, selected_candidatey = ensemble_p_values_fisher(sess, trainX, trainy, candidateX, candidatey, self, budget, our_method_params)
             elif metric == 'dat_ood_detector':
                 selected_candidateX, selected_candidatey = dat_ood_detector(sess, trainX, trainy, candidateX, candidatey,
                                                                      hybrid_test,
@@ -413,4 +413,5 @@ def test_dave():
     model = Dave2v1(hyper_params=hyper_param)
     model.test(test_xs, test_ys)
 if __name__ == '__main__':
+
     test_dave()
