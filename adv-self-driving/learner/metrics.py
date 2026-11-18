@@ -262,6 +262,145 @@ def entropy(sess, candidateX, candidatey, model, budget):
     selected_candidatey = np.array(candidatey)[selected_idx]
     return selected_candidateX, selected_candidatey, scores # entropy scores for all test inputs
 
+def maxp(sess, candidateX, candidatey, model, budget):
+    test_input = data_utils.val_generator(candidateX, candidatey, batch_size=BATCH_SIZE)
+    maxp_scores = 1 - tf.reduce_max(model.y_proba, axis=1)
+    with sess.as_default():
+        score = np.array([0.0])
+        for [x, y] in test_input:
+            test_dict = {
+                model.x_input: x,
+                model.y_input: y,
+                model.is_training: False
+            }
+
+            _maxp_score = sess.run(maxp_scores, feed_dict=test_dict)
+            score = np.hstack((score, _maxp_score.squeeze()))
+
+    scores = np.array(score[1:]).flatten()
+    # select ratio from the largest scores
+    idx = np.argsort(scores)[::-1]
+    selected_idx = idx[:int(len(idx) * budget)]
+    selected_candidateX = np.array(candidateX)[selected_idx]
+    selected_candidatey = np.array(candidatey)[selected_idx]
+    return selected_candidateX, selected_candidatey, scores 
+    
+def maxp_score(output_probability):
+    return [1 - max(prob) for prob in output_probability]
+
+def _sets_gd_diversity(IDs, features):
+    selected_features = features[list(IDs)]
+    dot_p = np.dot(selected_features, selected_features.T)
+    sign, log_det = np.linalg.slogdet(dot_p)
+    return log_det
+
+def _sets_std_diversity(IDs, features):
+    x_sample = features[list(IDs)]
+    std_f = np.std(x_sample, axis=0)
+    return np.linalg.norm(std_f, 1)
+
+def sets_select(size, index, features, output_probability, uncertainty, diversity, a):
+    start_time = time.time()
+
+    if uncertainty == 'gini':
+        un_scores = _sets_gini_score(output_probability)
+    elif uncertainty == 'maxp':
+        un_scores = maxp_score(output_probability)
+
+    sorted_indices = sorted(index, key=lambda i: un_scores[i], reverse=True)
+
+    top_percent_count = max(1, int(a * size))  # reduction
+    if a * size > len(index):
+        top_percent_count = len(index)
+    filtered_indices = sorted_indices[:top_percent_count]
+    chunks = [filtered_indices[i::size] for i in range(size)]
+
+    S = []
+    current_gd = 0
+    gd_state = _IncrementalGramLogDet(features.shape[1]) if diversity == 'gd' else None
+    for chunk in chunks:
+        max_gd_delta = -float('inf')
+        best_index = -1
+        gd_deltas = []
+        gd_datas = []
+
+        if len(chunk) == 0:
+            continue
+
+        trial_cache = {}
+        for i in chunk:
+            if diversity == 'gd':
+                new_gd, w, residual = gd_state.trial(features[i])
+                trial_cache[i] = (w, residual)
+            elif diversity == 'std':
+                new_gd = _sets_std_diversity(S + [i], features)
+            gd_datas.append(new_gd)
+            gd_delta = new_gd - current_gd  # the diversity contribution
+            gd_deltas.append(gd_delta)
+
+        min_gd = min(gd_deltas)  # min_max normalization
+        max_gd = max(gd_deltas)
+        if max_gd - min_gd > 0:
+            normalized_gd_deltas = [(gd - min_gd) / (max_gd - min_gd + 0.5) for gd in gd_deltas]
+        else:
+            normalized_gd_deltas = [0] * len(gd_deltas)
+
+        for idx, i in enumerate(chunk):
+            current_un = un_scores[i]
+            objective_value = current_un * normalized_gd_deltas[idx]
+
+            if objective_value > max_gd_delta:
+                max_gd_delta = objective_value
+                best_index = i
+
+        if best_index != -1:
+            S.append(best_index)
+            ind = chunk.index(best_index)
+            current_gd = gd_datas[ind]
+            if diversity == 'gd':
+                w, residual = trial_cache[best_index]
+                gd_state.commit(features[best_index], w, residual)
+
+    execution_time = time.time() - start_time
+    return S, execution_time
+
+
+def SETS(sess, candidateX, candidatey, model, budget, uncertainty='maxp', diversity='gd', a=3):
+    '''
+    SETS test selection metric: combines an uncertainty score (gini/maxp) with
+    a diversity score (gd/std) computed on the model's dense1 features.
+    '''
+    test_input = data_utils.val_generator(candidateX, candidatey, batch_size=BATCH_SIZE)
+    selection_size = int(budget * len(candidateX))
+
+    if model.model_name.lower() == 'dave2v1':
+        hidden_size = 582
+    elif model.model_name.lower() == 'dave2v2':
+        hidden_size = 582
+    elif model.model_name.lower() == 'dave2v9':
+        hidden_size = 500
+
+    with sess.as_default():
+        feat = np.zeros((1, hidden_size))
+        prob = np.zeros((1, int(model.y_proba.shape[-1])))
+        for [x, y] in test_input:  # not shuffle
+            test_dict = {
+                model.x_input: x,
+                model.y_input: y,
+                model.is_training: False
+            }
+            _feat = sess.run(model.dense1, feed_dict=test_dict)
+            _prob = sess.run(model.y_proba, feed_dict=test_dict)
+            feat = np.vstack((feat, _feat))
+            prob = np.vstack((prob, _prob))
+        feat_mat = feat[1:]
+        prob_mat = prob[1:]
+
+    index = list(range(len(candidateX)))
+    S, _ = sets_select(selection_size, index, feat_mat, prob_mat, uncertainty, diversity, a)
+    selected_candidateX, selected_candidatey = np.array(candidateX)[S], np.array(candidatey)[S]
+    return selected_candidateX, selected_candidatey
+
 def Random(sess, candidateX, candidatey, budget):
     selection_size = int(budget * candidateX.shape[0])
     select_idx = np.random.choice(np.arange(len(candidateX)), selection_size)
